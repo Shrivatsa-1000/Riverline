@@ -1,0 +1,26 @@
+services:
+  mongodb:
+    image: mongo:8
+    container_name: riverline-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: riverline
+    volumes:
+      - mongodb_data:/data/db
+
+  pipecat:
+    build:
+      context: ./pipecat
+    container_name: riverline-pipecat
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      PIPECAT_LOG_LEVEL: ${LOG_LEVEL:-info}
+    depends_on:
+      - mongodb
+
+volumes:
+  mongodb_data:

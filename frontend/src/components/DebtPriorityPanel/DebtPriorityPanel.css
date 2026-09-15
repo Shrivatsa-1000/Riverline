@@ -1,0 +1,84 @@
+.debt-priority-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.debt-priority-panel h2 {
+  margin: 0;
+  font-size: clamp(1.25rem, 1.8vw, 1.8rem);
+  line-height: 1.2;
+  color: #05228a;
+}
+
+.debt-priority-panel p {
+  margin: 6px 0 10px;
+  color: #5671aa;
+  font-size: 0.92rem;
+}
+
+.debt-priority-panel__body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding-right: 2px;
+}
+
+.debt-priority-list {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.debt-priority-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  border: 1px solid #e9efff;
+  border-radius: 10px;
+  padding: 8px 10px;
+}
+
+.debt-priority-row__left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: flex-start;
+}
+
+.debt-priority-row__left small {
+  color: #667cb1;
+  font-size: 0.8rem;
+}
+
+.debt-priority-row__left strong {
+  color: #041f80;
+  font-size: 0.93rem;
+}
+
+.debt-priority-row__left span {
+  font-size: 0.83rem;
+  color: #6073ac;
+}
+
+.debt-priority-row__right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+}
+
+.debt-priority-row__tag {
+  font-size: 0.74rem;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: #fff5e3;
+  color: #9a5f00;
+}
+
+.debt-priority-row__amount {
+  font-weight: 700;
+  color: #041f80;
+  font-size: 0.96rem;
+}

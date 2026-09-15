@@ -1,0 +1,46 @@
+.metric-card {
+  background: #fff;
+  border: 1px solid #e6eeff;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.metric-card__icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  background: #edf4ff;
+  color: #2257b8;
+  margin-bottom: 8px;
+}
+
+.metric-card h3 {
+  margin: 0;
+  font-size: 0.93rem;
+  color: #4c64a4;
+  font-weight: 600;
+}
+
+.metric-card__amount {
+  font-size: clamp(1.35rem, 2vw, 1.9rem);
+  margin-top: 5px;
+  line-height: 1.1;
+  font-weight: 800;
+  color: #001b77;
+}
+
+.metric-card__period {
+  margin-top: 3px;
+  font-size: 0.88rem;
+  color: #6074ac;
+}
+
+.metric-card--positive .metric-card__amount {
+  color: #00a34b;
+}
+
+.metric-card--warning .metric-card__amount {
+  color: #e89a00;
+}

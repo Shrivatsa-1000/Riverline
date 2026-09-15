@@ -1,0 +1,51 @@
+:root {
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  color: #0f1d4d;
+  background: #f5f9ff;
+  font-size: 14px;
+  line-height: 1.35;
+
+  --app-background: #f5f9ff;
+  --panel-background: #fff;
+  --panel-border: #e6eeff;
+  --layout-gap: 12px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.app-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  min-height: 100vh;
+  height: 100dvh;
+  gap: var(--layout-gap);
+  padding: var(--layout-gap);
+  background: var(--app-background);
+  overflow: hidden;
+}
+
+.panel {
+  background: var(--panel-background);
+  border: 1px solid var(--panel-border);
+  border-radius: 12px;
+  padding: 14px;
+}
+
+@media (max-width: 1320px) {
+  .app-layout {
+    grid-template-columns: 1fr;
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+}

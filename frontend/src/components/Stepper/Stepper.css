@@ -1,0 +1,71 @@
+.stepper-wrap {
+  position: relative;
+  flex: 1;
+  padding-top: 8px;
+}
+
+.stepper-line {
+  position: absolute;
+  top: 22px;
+  left: 24px;
+  right: 24px;
+  height: 2px;
+  background: #dce7ff;
+}
+
+.stepper {
+  display: grid;
+  gap: 6px;
+}
+
+.step {
+  position: relative;
+  text-align: center;
+  z-index: 1;
+}
+
+.step__dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  margin: 0 auto;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 0.82rem;
+  border: 2px solid #c6d8ff;
+  background: #fff;
+  color: #5973ad;
+}
+
+.step__title {
+  margin-top: 4px;
+  font-size: 0.78rem;
+  color: #344f8c;
+  white-space: nowrap;
+}
+
+.step--active .step__dot {
+  background: #0b69ff;
+  color: #fff;
+  border-color: #0b69ff;
+}
+
+.step--completed .step__dot {
+  background: #16b95f;
+  color: #fff;
+  border-color: #16b95f;
+}
+
+@media (max-width: 1320px) {
+  .stepper {
+    overflow-x: auto;
+    display: flex;
+    gap: 12px;
+    padding-bottom: 4px;
+  }
+
+  .step {
+    min-width: 95px;
+  }
+}

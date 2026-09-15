@@ -1,0 +1,77 @@
+.dashboard-main {
+  display: grid;
+  grid-template-rows: auto auto auto minmax(0, 1fr) auto;
+  gap: 10px;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.welcome {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+
+.welcome h1 {
+  margin: 0;
+  font-size: clamp(1.45rem, 2vw, 2rem);
+  line-height: 1.15;
+  color: #041f7f;
+}
+
+.welcome p {
+  margin: 5px 0 0;
+  color: #4f64a1;
+  font-size: 0.98rem;
+}
+
+.status-pill {
+  background: #ecfff5;
+  color: #18814a;
+  border: 1px solid #beefcf;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  min-height: 0;
+  max-height: 390px;
+}
+
+@media (max-width: 1320px) {
+  .dashboard-main {
+    height: auto;
+    overflow: visible;
+    grid-template-rows: auto;
+  }
+
+  .metrics-grid,
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-grid {
+    max-height: none;
+  }
+}

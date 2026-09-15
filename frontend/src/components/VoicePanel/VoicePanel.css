@@ -1,0 +1,52 @@
+.voice-panel h2 {
+  margin: 0;
+  font-size: 1.08rem;
+  color: #072987;
+}
+
+.voice-panel p {
+  margin: 6px 0 0;
+  color: #58679a;
+  font-size: 0.95rem;
+}
+
+.voice-panel__subtext {
+  margin-top: 4px;
+  font-size: 0.82rem;
+  color: #7080af;
+}
+
+.voice-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.voice-btn {
+  border: 0;
+  padding: 10px 8px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.92rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.voice-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.voice-btn--primary {
+  background: #0b69ff;
+  color: #fff;
+}
+
+.voice-btn--danger {
+  background: #ff4959;
+  color: #fff;
+}

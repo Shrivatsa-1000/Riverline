@@ -1,0 +1,23 @@
+.voice-wave {
+  margin-top: 10px;
+  height: 54px;
+  border: 1px solid #dce8ff;
+  border-radius: 10px;
+  background: #f7faff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 0 8px;
+}
+
+.voice-wave__bar {
+  width: 3px;
+  border-radius: 999px;
+  background: #8fb0ec;
+  transition: height 70ms linear, background-color 120ms ease;
+}
+
+.voice-wave--active .voice-wave__bar {
+  background: #0b69ff;
+}

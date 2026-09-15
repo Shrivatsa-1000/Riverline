@@ -1,0 +1,109 @@
+.user-menu {
+  position: relative;
+}
+
+.user-menu__button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #d7e3ff;
+  background: #fff;
+  border-radius: 12px;
+  padding: 7px 10px;
+  font-weight: 700;
+  font-size: 0.94rem;
+  cursor: pointer;
+}
+
+.user-menu__avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #20b05e;
+  color: #fff;
+}
+
+.user-menu__caret {
+  display: grid;
+  place-items: center;
+  color: #4d649c;
+}
+
+.user-menu__dropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  background: #fff;
+  border: 1px solid #d6e3ff;
+  border-radius: 10px;
+  min-width: 190px;
+  padding: 6px;
+  z-index: 20;
+}
+
+.user-menu__option {
+  width: 100%;
+  border: 0;
+  background: #f2f7ff;
+  color: #1e3f8f;
+  border-radius: 8px;
+  padding: 9px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.user-menu__form {
+  display: grid;
+  gap: 6px;
+}
+
+.user-menu__label {
+  font-size: 0.78rem;
+  color: #54689f;
+}
+
+.user-menu__input {
+  border: 1px solid #cddcff;
+  border-radius: 8px;
+  padding: 7px 8px;
+  font-size: 0.9rem;
+  color: #233b7d;
+}
+
+.user-menu__input:focus {
+  outline: 2px solid #98bcff;
+  border-color: #7fa8ff;
+}
+
+.user-menu__actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.user-menu__save,
+.user-menu__cancel {
+  border: 0;
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.user-menu__save {
+  background: #0b69ff;
+  color: #fff;
+}
+
+.user-menu__save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.user-menu__cancel {
+  background: #eef3ff;
+  color: #2a4386;
+}

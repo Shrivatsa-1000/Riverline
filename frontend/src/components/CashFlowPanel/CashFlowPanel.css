@@ -1,0 +1,85 @@
+.cash-flow-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.cash-flow-panel h2 {
+  margin: 0;
+  font-size: clamp(1.25rem, 1.8vw, 1.8rem);
+  line-height: 1.2;
+  color: #05228a;
+}
+
+.cash-flow-panel p {
+  margin: 6px 0 10px;
+  color: #5671aa;
+  font-size: 0.92rem;
+}
+
+.cash-flow-panel__body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding-right: 2px;
+}
+
+.cash-flow-list {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.cash-flow-subsection {
+  margin-top: 12px;
+}
+
+.cash-flow-subsection h3 {
+  margin: 0 0 8px;
+  color: #12328a;
+  font-size: 0.94rem;
+}
+
+.cash-flow-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  border: 1px solid #e9efff;
+  border-radius: 10px;
+  padding: 8px 10px;
+}
+
+.cash-flow-row--compact {
+  padding: 7px 10px;
+}
+
+.cash-flow-row__left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cash-flow-row__left small {
+  color: #667cb1;
+  font-size: 0.8rem;
+}
+
+.cash-flow-row__left strong {
+  color: #041f80;
+  font-size: 0.93rem;
+}
+
+.cash-flow-row__amount {
+  font-weight: 700;
+  color: #041f80;
+  font-size: 0.96rem;
+}
+
+.cash-flow-row__amount--in {
+  color: #00a64e;
+}
+
+.cash-flow-row__amount--out {
+  color: #ff3e4c;
+}
