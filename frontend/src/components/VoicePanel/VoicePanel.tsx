@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { Mic, PhoneOff } from 'lucide-react';
 import { VoiceWave } from '../VoiceWave/VoiceWave';
 import { useMicVolume } from '../../hooks/useMicVolume';
@@ -65,7 +66,13 @@ export function VoicePanel({
   onVoiceTranscript,
   onStartConversation
 }: VoicePanelProps) {
+  const hasStartedSessionRef = useRef(false);
+
   const { error, isListening, level, startListening, stopListening } = useMicVolume();
+
+  useEffect(() => {
+    hasStartedSessionRef.current = false;
+  }, [voiceSession?.room.name]);
 
   const hasExternalLevel = Number.isFinite(externalVoiceLevel);
   const externalLevel = hasExternalLevel ? Number(externalVoiceLevel) : null;
@@ -92,11 +99,16 @@ export function VoicePanel({
   const primaryButtonDisabled =
     (isVoiceActive && !isAgentSpeaking) || hasExternalLevel || (isSendingMessage && !isAgentSpeaking);
 
-  const primaryButtonLabel = getPrimaryButtonLabel(isSendingMessage, isAgentSpeaking, isVoiceActive);
+  const isSessionNotStarted = Boolean(onStartConversation) && !hasStartedSessionRef.current;
+  const primaryButtonLabel = isSessionNotStarted
+    ? 'Start conversation'
+    : getPrimaryButtonLabel(isSendingMessage, isAgentSpeaking, isVoiceActive);
 
   const handlePrimaryClick = async () => {
-    if (onStartConversation) {
+    if (onStartConversation && !hasStartedSessionRef.current) {
       await onStartConversation();
+      hasStartedSessionRef.current = true;
+      return;
     }
 
     await startVoiceCapture();

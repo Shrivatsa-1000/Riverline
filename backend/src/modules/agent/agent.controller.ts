@@ -9,9 +9,8 @@ function enforceRupeeCurrency(text: string) {
     .replace(/\bUS\s*dollars?\b/gi, 'rupees')
     .replace(/\bUSD\b/gi, 'rupees')
     .replace(/\bdollars?\b/gi, 'rupees')
-    .replace(/us\$\s*/gi, '₹')
-    .replace(/\$\s*(\d[\d,]*(?:\.\d+)?)/g, '₹$1')
-    .replace(/\$/g, '₹')
+    .replace(/us\$\s*(\d[\d,]*(?:\.\d+)?)/gi, '₹$1')
+    .replace(/(^|\s)\$\s*(\d[\d,]*(?:\.\d+)?)/g, '$1₹$2')
     .replace(/\s{2,}/g, ' ')
     .trim();
 }

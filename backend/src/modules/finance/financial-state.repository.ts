@@ -38,6 +38,16 @@ function convertLegacyPaiseDocument(document: FinancialStateDocument) {
     };
   }
 
+  if (document.amountUnit !== 'paise') {
+    return {
+      changed: true,
+      document: {
+        ...document,
+        amountUnit: 'rupee' as const
+      }
+    };
+  }
+
   const incomeItems = document.incomeItems.map((item) => ({
     ...item,
     amount: {
