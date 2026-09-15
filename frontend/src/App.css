@@ -41,6 +41,15 @@ body {
   padding: 14px;
 }
 
+.panel-empty {
+  border: 1px dashed #dce8ff;
+  border-radius: 10px;
+  background: #f8fbff;
+  color: #5a6fa7;
+  font-size: 0.9rem;
+  padding: 10px 12px;
+}
+
 @media (max-width: 1320px) {
   .app-layout {
     grid-template-columns: 1fr;

@@ -1,18 +1,22 @@
 import { useEffect, useRef, useState } from 'react';
 import { fetchStepperConfig } from './api/stepperApi';
-import { requestAgentReply } from './api/agentApi';
+import { openAgentSession, requestAgentReply } from './api/agentApi';
 import { appendChatMessage, createChat, listChatMessages, type ChatMessage } from './api/chatApi';
+import { emptyDashboardData, fetchDashboardData } from './api/financialStateApi';
 import { createOrRefreshVoiceSession } from './api/voiceApi';
-import { defaultStepperConfig } from './data/mockData';
 import { useAgentAudioPlayer, type AudioPlayFailureReason } from './hooks/useAgentAudioPlayer';
 import { Sidebar } from './sections/Sidebar/Sidebar';
 import { DashboardMain } from './sections/DashboardMain/DashboardMain';
-import type { ChatItem, StepperConfig } from './types/dashboard';
+import type { ChatItem, DashboardData, StepperConfig } from './types/dashboard';
 import type { VoiceSessionResponse } from './types/voice';
 import './App.css';
 
 const DEFAULT_USER_NAME = 'Ankit';
 const AGENT_NAME = 'Paisa';
+
+const emptyStepperConfig: StepperConfig = {
+  steps: []
+};
 
 function formatChatTime(isoTime: string) {
   const value = new Date(isoTime);
@@ -61,7 +65,8 @@ function createLocalFallbackMessage(text: string): ChatItem {
 
 export default function App() {
   const [name, setName] = useState(DEFAULT_USER_NAME);
-  const [stepperConfig, setStepperConfig] = useState<StepperConfig>(defaultStepperConfig);
+  const [stepperConfig, setStepperConfig] = useState<StepperConfig>(emptyStepperConfig);
+  const [dashboardData, setDashboardData] = useState<DashboardData>(emptyDashboardData);
 
   const [chatId, setChatId] = useState<string | null>(null);
   const [chatItems, setChatItems] = useState<ChatItem[]>([]);
@@ -76,6 +81,7 @@ export default function App() {
 
   const activeSendTokenRef = useRef<number | null>(null);
   const nextSendTokenRef = useRef(1);
+  const hasStartedVoiceConversationRef = useRef(false);
 
   const beginSending = () => {
     const token = nextSendTokenRef.current;
@@ -111,19 +117,43 @@ export default function App() {
     return true;
   };
 
+  const refreshFinanceUi = async (userName: string) => {
+    const [stepper, dashboard] = await Promise.all([
+      fetchStepperConfig(userName),
+      fetchDashboardData(userName)
+    ]);
+
+    setStepperConfig(stepper);
+    setDashboardData(dashboard);
+  };
+
   useEffect(() => {
     let alive = true;
 
-    fetchStepperConfig().then((config) => {
-      if (alive) {
-        setStepperConfig(config);
-      }
-    });
+    const safeName = name.trim() || DEFAULT_USER_NAME;
+
+    Promise.all([fetchStepperConfig(safeName), fetchDashboardData(safeName)])
+      .then(([stepper, dashboard]) => {
+        if (!alive) {
+          return;
+        }
+
+        setStepperConfig(stepper);
+        setDashboardData(dashboard);
+      })
+      .catch(() => {
+        if (!alive) {
+          return;
+        }
+
+        setStepperConfig(emptyStepperConfig);
+        setDashboardData(emptyDashboardData);
+      });
 
     return () => {
       alive = false;
     };
-  }, []);
+  }, [name]);
 
   useEffect(() => {
     let alive = true;
@@ -139,6 +169,7 @@ export default function App() {
     const loadChat = async () => {
       stopAgentAudio();
       forceEndSending();
+      hasStartedVoiceConversationRef.current = false;
       setChatStatus('Loading chat history...');
       setChatItems([]);
       setChatId(null);
@@ -242,7 +273,32 @@ export default function App() {
     };
   }, [name]);
 
-  const sendMessage = async (text: string) => {
+  const appendAgentMessageAndPlayAudio = async (
+    currentChatId: string,
+    agentText: string,
+    audioBase64?: string,
+    audioMimeType?: string
+  ) => {
+    setLastAgentReplyText(agentText);
+
+    const savedAgentMessage = await appendChatMessage({
+      chatId: currentChatId,
+      senderRole: 'agent',
+      senderName: AGENT_NAME,
+      content: agentText
+    });
+
+    setChatItems((previous) => [...previous, mapMessageToChatItem(savedAgentMessage)]);
+    setChatStatus('Chat ready');
+
+    const audioResult = await playAgentAudio(audioBase64, audioMimeType);
+
+    if (!audioResult.ok) {
+      setChatStatus(getAudioFailureStatus(audioResult.reason));
+    }
+  };
+
+  const sendMessage = async (text: string, source: 'voice' | 'chat' | 'manual' = 'chat') => {
     const currentChatId = chatId;
     const safeText = text.trim();
     const safeName = name.trim() || DEFAULT_USER_NAME;
@@ -273,26 +329,18 @@ export default function App() {
       const agentResponse = await requestAgentReply({
         message: safeText,
         userName: safeName,
+        source,
         conversationId: currentChatId
       });
 
-      setLastAgentReplyText(agentResponse.reply);
+      await appendAgentMessageAndPlayAudio(
+        currentChatId,
+        agentResponse.reply,
+        agentResponse.audioBase64,
+        agentResponse.audioMimeType
+      );
 
-      const savedAgentMessage = await appendChatMessage({
-        chatId: currentChatId,
-        senderRole: 'agent',
-        senderName: AGENT_NAME,
-        content: agentResponse.reply
-      });
-
-      setChatItems((previous) => [...previous, mapMessageToChatItem(savedAgentMessage)]);
-      setChatStatus('Chat ready');
-
-      const audioResult = await playAgentAudio(agentResponse.audioBase64, agentResponse.audioMimeType);
-
-      if (!audioResult.ok) {
-        setChatStatus(getAudioFailureStatus(audioResult.reason));
-      }
+      await refreshFinanceUi(safeName);
     } catch (unknownError) {
       const fallbackText =
         unknownError instanceof Error
@@ -319,6 +367,44 @@ export default function App() {
     }
   };
 
+  const startVoiceConversation = async () => {
+    const currentChatId = chatId;
+    const safeName = name.trim() || DEFAULT_USER_NAME;
+
+    if (!currentChatId || hasStartedVoiceConversationRef.current) {
+      return;
+    }
+
+    const sendToken = beginSending();
+    hasStartedVoiceConversationRef.current = true;
+
+    try {
+      stopAgentAudio();
+      setChatStatus(`${AGENT_NAME} is joining...`);
+
+      const response = await openAgentSession({
+        userName: safeName,
+        conversationId: currentChatId
+      });
+
+      await appendAgentMessageAndPlayAudio(
+        currentChatId,
+        response.reply,
+        response.audioBase64,
+        response.audioMimeType
+      );
+
+      await refreshFinanceUi(safeName);
+    } catch (error: unknown) {
+      hasStartedVoiceConversationRef.current = false;
+
+      const message = error instanceof Error ? error.message : 'Unable to start voice conversation';
+      setChatStatus(message);
+    } finally {
+      endSending(sendToken);
+    }
+  };
+
   return (
     <div className="app-layout">
       <Sidebar
@@ -329,12 +415,13 @@ export default function App() {
         isAgentSpeaking={isAgentSpeaking}
         lastAgentReplyText={lastAgentReplyText}
         onInterruptAgent={interruptAgentSpeech}
-        onSendMessage={sendMessage}
+        onSendMessage={async (text) => sendMessage(text, 'chat')}
+        onStartVoiceConversation={startVoiceConversation}
         voiceSession={voiceSession}
         voiceSessionStatus={voiceSessionStatus}
-        onVoiceTranscript={sendMessage}
+        onVoiceTranscript={async (text) => sendMessage(text, 'voice')}
       />
-      <DashboardMain name={name} onNameChange={setName} steps={stepperConfig.steps} />
+      <DashboardMain name={name} onNameChange={setName} steps={stepperConfig.steps} data={dashboardData} />
     </div>
   );
 }

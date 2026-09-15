@@ -45,10 +45,20 @@
   font-size: 0.9rem;
 }
 
+.status-pill--empty {
+  background: #f7faff;
+  border-color: #dce8ff;
+  color: #4f64a1;
+}
+
 .metrics-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(140px, 1fr));
   gap: 10px;
+}
+
+.metrics-grid__empty {
+  grid-column: 1 / -1;
 }
 
 .detail-grid {

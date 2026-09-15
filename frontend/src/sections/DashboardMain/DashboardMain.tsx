@@ -4,23 +4,19 @@ import { FinancialDetailsPanel } from '../../components/FinancialDetailsPanel/Fi
 import { MetricCard } from '../../components/MetricCard/MetricCard';
 import { Stepper } from '../../components/Stepper/Stepper';
 import { UserMenu } from '../../components/UserMenu/UserMenu';
-import {
-  cashFlowAnytimeItems,
-  cashFlowItems,
-  debtPriorityItems,
-  financialDetailItems,
-  summaryCards
-} from '../../data/mockData';
-import type { StepItem } from '../../types/dashboard';
+import type { DashboardData, StepItem } from '../../types/dashboard';
 import './DashboardMain.css';
 
 interface DashboardMainProps {
   name: string;
   onNameChange: (name: string) => void;
   steps: StepItem[];
+  data: DashboardData;
 }
 
-export function DashboardMain({ name, onNameChange, steps }: DashboardMainProps) {
+export function DashboardMain({ name, onNameChange, steps, data }: DashboardMainProps) {
+  const statusPillText = data.statusPillText.trim() || 'No data available at the moment.';
+
   return (
     <main className="dashboard-main">
       <header className="topbar">
@@ -33,21 +29,25 @@ export function DashboardMain({ name, onNameChange, steps }: DashboardMainProps)
           <h1>Welcome back, {name} 👋</h1>
           <p>You're on track! Here&apos;s your financial overview for the next 30 days.</p>
         </div>
-        <div className="status-pill">You have ₹20,000 left per month.</div>
+        <div className={`status-pill${data.summaryCards.length === 0 ? ' status-pill--empty' : ''}`}>
+          {statusPillText}
+        </div>
       </section>
 
       <section className="metrics-grid">
-        {summaryCards.map((item) => (
-          <MetricCard item={item} key={item.title} />
-        ))}
+        {data.summaryCards.length > 0 ? (
+          data.summaryCards.map((item) => <MetricCard item={item} key={item.title} />)
+        ) : (
+          <div className="panel panel-empty metrics-grid__empty">No data available at the moment.</div>
+        )}
       </section>
 
       <section className="detail-grid">
-        <CashFlowPanel anytimeItems={cashFlowAnytimeItems} items={cashFlowItems} />
-        <DebtPriorityPanel items={debtPriorityItems} />
+        <CashFlowPanel anytimeItems={data.cashFlowAnytimeItems} items={data.cashFlowItems} />
+        <DebtPriorityPanel items={data.debtPriorityItems} />
       </section>
 
-      <FinancialDetailsPanel items={financialDetailItems} />
+      <FinancialDetailsPanel items={data.financialDetailItems} />
     </main>
   );
 }

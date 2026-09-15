@@ -25,6 +25,10 @@
   padding-right: 2px;
 }
 
+.cash-flow-panel__empty {
+  margin-top: 8px;
+}
+
 .cash-flow-list {
   display: flex;
   flex-direction: column;

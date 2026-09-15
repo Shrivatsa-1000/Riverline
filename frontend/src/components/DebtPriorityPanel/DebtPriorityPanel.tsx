@@ -6,6 +6,16 @@ interface DebtPriorityPanelProps {
 }
 
 export function DebtPriorityPanel({ items }: DebtPriorityPanelProps) {
+  if (items.length === 0) {
+    return (
+      <article className="panel debt-priority-panel">
+        <h2>Debt &amp; Credit Card Prioritization</h2>
+        <p>Recommended payment order based on due dates and interest rates.</p>
+        <div className="panel-empty debt-priority-panel__empty">No data available at the moment.</div>
+      </article>
+    );
+  }
+
   return (
     <article className="panel debt-priority-panel">
       <h2>Debt &amp; Credit Card Prioritization</h2>

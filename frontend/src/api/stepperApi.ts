@@ -1,7 +1,10 @@
 import { getApiBaseUrl } from './apiBaseUrl';
 import { httpJson } from './httpJson';
-import { defaultStepperConfig } from '../data/mockData';
 import type { StepItem, StepStatus, StepperConfig } from '../types/dashboard';
+
+const emptyStepperConfig: StepperConfig = {
+  steps: []
+};
 
 function normalizeStatus(value: unknown): StepStatus {
   if (value === 'active' || value === 'completed' || value === 'pending') {
@@ -67,7 +70,7 @@ function normalizeStringSteps(payload: {
 
 function normalizeStepperConfig(data: unknown): StepperConfig {
   if (!data || typeof data !== 'object') {
-    return defaultStepperConfig;
+    return emptyStepperConfig;
   }
 
   const payload = data as {
@@ -77,7 +80,7 @@ function normalizeStepperConfig(data: unknown): StepperConfig {
   };
 
   if (!Array.isArray(payload.steps)) {
-    return defaultStepperConfig;
+    return emptyStepperConfig;
   }
 
   if (payload.steps.length > 0 && typeof payload.steps[0] === 'string') {
@@ -95,14 +98,23 @@ function normalizeStepperConfig(data: unknown): StepperConfig {
   };
 }
 
-export async function fetchStepperConfig(): Promise<StepperConfig> {
+export async function fetchStepperConfig(userName?: string): Promise<StepperConfig> {
   try {
-    const data = await httpJson<unknown>(`${getApiBaseUrl()}/api/stepper`, undefined, {
+    const query = new URLSearchParams();
+
+    if (userName && userName.trim()) {
+      query.set('userName', userName.trim());
+    }
+
+    const queryString = query.toString();
+    const url = `${getApiBaseUrl()}/api/stepper${queryString ? `?${queryString}` : ''}`;
+
+    const data = await httpJson<unknown>(url, undefined, {
       fallbackError: 'Unable to load stepper config'
     });
 
     return normalizeStepperConfig(data);
   } catch {
-    return defaultStepperConfig;
+    return emptyStepperConfig;
   }
 }

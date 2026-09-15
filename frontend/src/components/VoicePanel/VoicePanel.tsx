@@ -14,6 +14,7 @@ interface VoicePanelProps {
   lastAgentReplyText: string;
   onInterruptAgent: () => boolean;
   onVoiceTranscript: (text: string) => Promise<void>;
+  onStartConversation?: () => Promise<void>;
 }
 
 function clamp(value: number) {
@@ -61,7 +62,8 @@ export function VoicePanel({
   isAgentSpeaking,
   lastAgentReplyText,
   onInterruptAgent,
-  onVoiceTranscript
+  onVoiceTranscript,
+  onStartConversation
 }: VoicePanelProps) {
   const { error, isListening, level, startListening, stopListening } = useMicVolume();
 
@@ -92,6 +94,14 @@ export function VoicePanel({
 
   const primaryButtonLabel = getPrimaryButtonLabel(isSendingMessage, isAgentSpeaking, isVoiceActive);
 
+  const handlePrimaryClick = async () => {
+    if (onStartConversation) {
+      await onStartConversation();
+    }
+
+    await startVoiceCapture();
+  };
+
   return (
     <section className="panel voice-panel">
       <h2>Voice agent ready</h2>
@@ -108,7 +118,7 @@ export function VoicePanel({
           className="voice-btn voice-btn--primary"
           disabled={primaryButtonDisabled}
           onClick={() => {
-            void startVoiceCapture();
+            void handlePrimaryClick();
           }}
           type="button"
         >

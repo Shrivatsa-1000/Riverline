@@ -8,25 +8,9 @@ interface AgentReplyResponse {
   audioMimeType?: string;
 }
 
-export async function requestAgentReply(input: {
-  message: string;
-  userName: string;
-  conversationId?: string;
-}): Promise<AgentReplyResponse> {
-  const payload = await httpJson<unknown>(
-    `${getApiBaseUrl()}/api/agent/reply`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(input)
-    },
-    {
-      fallbackError: 'Unable to get agent reply'
-    }
-  );
+interface OpenAgentSessionResponse extends AgentReplyResponse {}
 
+function normalizeAgentPayload(payload: unknown) {
   if (!payload || typeof payload !== 'object') {
     throw new Error('Invalid agent response payload');
   }
@@ -43,4 +27,53 @@ export async function requestAgentReply(input: {
     audioBase64: typeof response.audioBase64 === 'string' ? response.audioBase64 : undefined,
     audioMimeType: typeof response.audioMimeType === 'string' ? response.audioMimeType : undefined
   };
+}
+
+export async function openAgentSession(input: {
+  userName: string;
+  conversationId?: string;
+}): Promise<OpenAgentSessionResponse> {
+  const payload = await httpJson<unknown>(
+    `${getApiBaseUrl()}/api/agent/open`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(input)
+    },
+    {
+      fallbackError: 'Unable to open agent session'
+    }
+  );
+
+  return normalizeAgentPayload(payload);
+}
+
+export async function requestAgentReply(input: {
+  message: string;
+  userName: string;
+  source?: 'voice' | 'chat' | 'manual';
+  conversationId?: string;
+}): Promise<AgentReplyResponse> {
+  const payload = await httpJson<unknown>(
+    `${getApiBaseUrl()}/api/agent/reply`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message: input.message,
+        userName: input.userName,
+        source: input.source,
+        conversationId: input.conversationId
+      })
+    },
+    {
+      fallbackError: 'Unable to get agent reply'
+    }
+  );
+
+  return normalizeAgentPayload(payload);
 }

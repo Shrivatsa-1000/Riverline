@@ -7,6 +7,14 @@ interface StepperProps {
 }
 
 export function Stepper({ steps }: StepperProps) {
+  if (steps.length === 0) {
+    return (
+      <div className="stepper-wrap stepper-wrap--empty">
+        <div className="panel-empty">No data available at the moment.</div>
+      </div>
+    );
+  }
+
   const columns = Math.max(steps.length, 1);
 
   return (

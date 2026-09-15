@@ -56,3 +56,12 @@ export interface FinancialDetailItem {
   amount: string;
   period: string;
 }
+
+export interface DashboardData {
+  statusPillText: string;
+  summaryCards: SummaryCard[];
+  cashFlowItems: CashFlowItem[];
+  cashFlowAnytimeItems: CashFlowAnytimeItem[];
+  debtPriorityItems: DebtPriorityItem[];
+  financialDetailItems: FinancialDetailItem[];
+}

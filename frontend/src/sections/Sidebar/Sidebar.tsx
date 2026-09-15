@@ -14,6 +14,7 @@ interface SidebarProps {
   lastAgentReplyText: string;
   onInterruptAgent: () => boolean;
   onSendMessage: (text: string) => Promise<void>;
+  onStartVoiceConversation?: () => Promise<void>;
   voiceSession: VoiceSessionResponse | null;
   voiceSessionStatus: string;
   onVoiceTranscript: (text: string) => Promise<void>;
@@ -29,6 +30,7 @@ export function Sidebar({
   lastAgentReplyText,
   onInterruptAgent,
   onSendMessage,
+  onStartVoiceConversation,
   voiceSession,
   voiceSessionStatus,
   onVoiceTranscript,
@@ -46,6 +48,7 @@ export function Sidebar({
         lastAgentReplyText={lastAgentReplyText}
         onInterruptAgent={onInterruptAgent}
         onVoiceTranscript={onVoiceTranscript}
+        onStartConversation={onStartVoiceConversation}
       />
       <ChatPanel
         chatItems={chatItems}

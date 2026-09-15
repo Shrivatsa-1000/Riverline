@@ -4,6 +4,10 @@
   padding-top: 8px;
 }
 
+.stepper-wrap--empty {
+  padding-top: 0;
+}
+
 .stepper-line {
   position: absolute;
   top: 22px;

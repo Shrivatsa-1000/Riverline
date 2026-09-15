@@ -11,6 +11,11 @@ import { ChatController } from './modules/chat/chat.controller';
 import { ChatRepository } from './modules/chat/chat.repository';
 import { registerChatRoutes } from './modules/chat/chat.routes';
 import { ChatService } from './modules/chat/chat.service';
+import { FinancialIntakeService } from './modules/finance/financial-intake.service';
+import { FinanceController } from './modules/finance/finance.controller';
+import { FinancialStateRepository } from './modules/finance/financial-state.repository';
+import { FinancialToolsService } from './modules/finance/financial-tools.service';
+import { registerFinanceRoutes } from './modules/finance/finance.routes';
 import { VoiceController } from './modules/voice/voice.controller';
 import { VoiceSessionRepository } from './modules/voice/voice.repository';
 import { registerVoiceRoutes } from './modules/voice/voice.routes';
@@ -19,14 +24,17 @@ import { registerHealthRoutes } from './routes/health.routes';
 
 interface AppDependencies {
   chatRepository: ChatRepository;
+  financialStateRepository: FinancialStateRepository;
   voiceSessionRepository: VoiceSessionRepository;
   agentController: AgentController;
+  financeController: FinanceController;
   chatController: ChatController;
   voiceController: VoiceController;
 }
 
 function buildDependencies(env: AppEnv, mongoDb: Db): AppDependencies {
   const chatRepository = new ChatRepository(mongoDb);
+  const financialStateRepository = new FinancialStateRepository(mongoDb);
   const voiceSessionRepository = new VoiceSessionRepository(mongoDb);
 
   const openAiAgentService = new OpenAiAgentService({
@@ -37,6 +45,13 @@ function buildDependencies(env: AppEnv, mongoDb: Db): AppDependencies {
   });
 
   const chatService = new ChatService(chatRepository, env.AGENT_NAME);
+  const financialToolsService = new FinancialToolsService(financialStateRepository);
+  const financialIntakeService = new FinancialIntakeService(
+    financialStateRepository,
+    financialToolsService,
+    openAiAgentService
+  );
+
   const voiceService = new VoiceService(
     {
       dailyApiUrl: env.DAILY_API_URL,
@@ -50,8 +65,10 @@ function buildDependencies(env: AppEnv, mongoDb: Db): AppDependencies {
 
   return {
     chatRepository,
+    financialStateRepository,
     voiceSessionRepository,
-    agentController: new AgentController(openAiAgentService),
+    agentController: new AgentController(openAiAgentService, financialIntakeService),
+    financeController: new FinanceController(financialIntakeService),
     chatController: new ChatController(chatService),
     voiceController: new VoiceController(voiceService)
   };
@@ -72,6 +89,7 @@ export async function createApp(env: AppEnv) {
   const dependencies = buildDependencies(env, mongo.db);
 
   await dependencies.chatRepository.ensureIndexes();
+  await dependencies.financialStateRepository.ensureIndexes();
   await dependencies.voiceSessionRepository.ensureIndexes();
 
   app.addHook('onClose', async () => {
@@ -79,6 +97,7 @@ export async function createApp(env: AppEnv) {
   });
 
   await registerHealthRoutes(app);
+  await registerFinanceRoutes(app, { controller: dependencies.financeController });
   await registerAgentRoutes(app, { controller: dependencies.agentController });
 
   app.get('/', async () => {

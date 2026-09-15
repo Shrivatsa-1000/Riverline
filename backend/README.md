@@ -49,7 +49,17 @@ npm run build
 
 ## API (agent)
 
+- `POST /api/agent/open` - open/resume intake conversation and get first assistant prompt
 - `POST /api/agent/reply` - generate a text reply from OpenAI agent
+
+### `POST /api/agent/open` body
+
+```json
+{
+  "userName": "Ankit",
+  "conversationId": "voice-session-1"
+}
+```
 
 ### `POST /api/agent/reply` body
 
@@ -66,6 +76,10 @@ npm run build
 - `POST /api/voice/session` - get or create room for user + issue fresh tokens
 - `POST /api/voice/room` - create a private Daily room
 - `POST /api/voice/token` - issue short-lived tokens for user + Paisa bot
+
+## API (stepper)
+
+- `GET /api/stepper?userName=Ankit` - get deterministic stepper statuses from saved financial state
 
 ### `POST /api/voice/session` body
 

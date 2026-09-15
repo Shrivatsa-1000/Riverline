@@ -15,6 +15,16 @@ const financialDetailIcons: Record<FinancialDetailType, LucideIcon> = {
 };
 
 export function FinancialDetailsPanel({ items }: FinancialDetailsPanelProps) {
+  if (items.length === 0) {
+    return (
+      <section className="panel financial-details-panel">
+        <h2>Your Financial Details</h2>
+        <p>All your income, expenses, debts and more.</p>
+        <div className="panel-empty financial-details-panel__empty">No data available at the moment.</div>
+      </section>
+    );
+  }
+
   return (
     <section className="panel financial-details-panel">
       <h2>Your Financial Details</h2>

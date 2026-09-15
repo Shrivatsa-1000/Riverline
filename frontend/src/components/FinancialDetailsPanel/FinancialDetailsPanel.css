@@ -17,6 +17,10 @@
   gap: 10px;
 }
 
+.financial-details-panel__empty {
+  margin-top: 8px;
+}
+
 .financial-details-card {
   border: 1px solid #e6eeff;
   border-radius: 10px;
