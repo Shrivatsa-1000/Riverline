@@ -1,5 +1,7 @@
 Edit : the open ai endpoint needs to an websocket endpoint forgot to mention this too. 
 Edit : Sorry added readme late
+
+- the voice agent takes instructions priorities things tells you summaries and basic things about your budget then it adds edits delete items too. And the dashboard edits things in realtime. 
 # Riverline
 
 Voice-first financial intake app with:
